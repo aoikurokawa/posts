@@ -1,0 +1,8 @@
+title = 'Understanding BitTorrent 1: A Deep Dive into Bencode'
+file_name = 'understanding-bittorrent-1-a-deep-dive-into-bencode'
+description = 'BitTorrent is one of the pioneering and most popular peer-to-peer (P2P) file sharing protocols'
+tags = ['bittorrent', 'Rust']
+posted = '11/30/2023'
+estimated_reading_time = 5
+author = 'aoi' 
+order = 4

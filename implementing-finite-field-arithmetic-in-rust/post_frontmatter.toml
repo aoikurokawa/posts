@@ -1,0 +1,8 @@
+title = 'Implementing Finite Field in Rust'
+file_name = 'implementing-finite-field-arithmetic-in-rust'
+description = 'Implementing Finite Field in Rust'
+tags = ['rust']
+posted = '27/08/2023'
+estimated_reading_time = 10
+author = 'aoi' 
+order = 1

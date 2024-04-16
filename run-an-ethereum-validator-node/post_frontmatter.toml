@@ -1,0 +1,8 @@
+title = 'Run an Ethereum validator on Goerli testnet'
+file_name = 'run-an-ethereum-validator-node'
+description = 'Run an ethereum validator'
+tags = ['ethereum']
+posted = '27/08/2023'
+estimated_reading_time = 10
+author = 'aoi' 
+order = 4
