@@ -1,11 +1,11 @@
 ---
 title: Understanding BitTorrent 2 A Deep Dive Into Torrent File
 tags:
-  - "Rust"
-  - "BitTorrent"
+  - Rust
+  - BitTorrent
 private: false
-updated_at: ''
-id: null
+updated_at: '2024-04-18T08:14:05+09:00'
+id: 33b1f061e0c79cde4336
 organization_url_name: null
 slide: false
 ignorePublish: false

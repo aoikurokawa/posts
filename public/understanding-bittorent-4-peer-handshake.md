@@ -1,11 +1,11 @@
 ---
 title: Understanding BitTorent 4 Peer Handshake
 tags:
-  - "Rust"
-  - "BitTorrent"
+  - Rust
+  - BitTorrent
 private: false
-updated_at: ''
-id: null
+updated_at: '2024-04-18T08:14:05+09:00'
+id: d9be04a708d949693394
 organization_url_name: null
 slide: false
 ignorePublish: false

@@ -1,11 +1,11 @@
 ---
 title: Understanding BitTorent 6 Download the Whole File
 tags:
-  - "Rust"
-  - "BitTorrent"
+  - Rust
+  - BitTorrent
 private: false
-updated_at: ''
-id: null
+updated_at: '2024-04-18T08:14:05+09:00'
+id: 6a121a6027788cd97725
 organization_url_name: null
 slide: false
 ignorePublish: false

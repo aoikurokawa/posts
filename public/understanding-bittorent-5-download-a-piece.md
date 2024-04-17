@@ -1,11 +1,11 @@
 ---
 title: Understanding BitTorent 5 Download A Piece
 tags:
-  - "Rust"
-  - "BitTorrent"
+  - Rust
+  - BitTorrent
 private: false
-updated_at: ''
-id: null
+updated_at: '2024-04-18T08:14:06+09:00'
+id: 27578b3be3e75c1c3fcb
 organization_url_name: null
 slide: false
 ignorePublish: false

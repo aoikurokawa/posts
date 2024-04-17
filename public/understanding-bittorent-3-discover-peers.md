@@ -1,11 +1,11 @@
 ---
 title: Understanding BitTorent 3 Discover Peers
 tags:
-  - "Rust"
-  - "BitTorrent"
+  - Rust
+  - BitTorrent
 private: false
-updated_at: ''
-id: null
+updated_at: '2024-04-18T08:14:05+09:00'
+id: 3868fe95cbbbe85f8c99
 organization_url_name: null
 slide: false
 ignorePublish: false
