@@ -1,7 +1,8 @@
 ---
 title: Understanding BitTorent 1 A Deep Dive Into Bencode
 tags:
-  - ''
+  - "Rust"
+  - "BitTorrent"
 private: false
 updated_at: ''
 id: null
