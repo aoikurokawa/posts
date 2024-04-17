@@ -1,5 +1,5 @@
 ---
-title: Understanding BitTorent 1: A Deep Dive Into Bencode
+title: Understanding BitTorent 1 A Deep Dive Into Bencode
 tags:
   - ''
 private: false
@@ -9,6 +9,7 @@ organization_url_name: null
 slide: false
 ignorePublish: false
 ---
+
 ## Introduction:
 Welcome to our comprehensive guide on BitTorrent, one of the pioneering and most popular peer-to-peer (P2P) file sharing protocols. In this blog, we'll explore the mechanics of BitTorrent and its unique encoding method, Bencode. Whether you're a tech enthusiast or just curious about how file sharing works, this post will provide you with a clear understanding of BitTorrent's functionality and its impact on the digital world.
 
