@@ -1,3 +1,16 @@
+---
+title: Understanding BitTorent 3 Discover Peers
+tags:
+  - "Rust"
+  - "BitTorrent"
+private: false
+updated_at: ''
+id: null
+organization_url_name: null
+slide: false
+ignorePublish: false
+---
+
 ## Introduction to BitTorrent Tracker Interaction with Rust
 
 Welcome back to our exploration of the BitTorrent protocol! In [our previous blog](https://www.nxted.co.jp/hp/blog/blog_detail?id=49), we delved into the intricacies of parsing torrent files, uncovering valuable information like tracker_url, info_hash, piece_length, and piece_hashes. This knowledge laid the groundwork for understanding the fundamental components of BitTorrent's architecture. Today, we're taking a significant leap forward by focusing on a crucial aspect of the BitTorrent ecosystem - interacting with a tracker.

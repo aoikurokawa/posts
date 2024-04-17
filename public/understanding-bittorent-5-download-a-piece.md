@@ -1,3 +1,16 @@
+---
+title: Understanding BitTorent 5 Download A Piece
+tags:
+  - "Rust"
+  - "BitTorrent"
+private: false
+updated_at: ''
+id: null
+organization_url_name: null
+slide: false
+ignorePublish: false
+---
+
 ## Introduction
 
 In [our last exploration](https://www.nxted.co.jp/blog/blog_detail?id=55), we delved into discovering peers and tried to handshake with one of the peer, then we successfully got the peer id.

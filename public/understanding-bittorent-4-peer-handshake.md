@@ -1,3 +1,16 @@
+---
+title: Understanding BitTorent 4 Peer Handshake
+tags:
+  - "Rust"
+  - "BitTorrent"
+private: false
+updated_at: ''
+id: null
+organization_url_name: null
+slide: false
+ignorePublish: false
+---
+
 ## Introduction
 
 In [our last exploration](https://www.nxted.co.jp/blog/blog_detail?id=49), we delved into the intricacies of communicating with a BitTorrent tracker, breaking down the request components essential for successful peer discovery. Building on that foundation, we now advance to establishing direct communication with peers. In this installment, we'll navigate the crucial step of initiating a handshake with a peer, a gateway to peer-to-peer file sharing in the BitTorrent ecosystem. Mastering the handshake process is pivotal, as it not only validates the connection between peers but also sets the stage for subsequent data exchange, laying the groundwork for efficient file sharing. Ever wondered how your BitTorrent client selects peers for file exchange or how it ensures secure and reliable connections? In this post, we demystify the handshake protocol that makes it all possible. If you're new to our series or need a refresher on the fundamentals of tracker communication, I encourage you to revisit [our previous discussion](https://www.nxted.co.jp/blog/blog_detail?id=49) for a comprehensive overview.

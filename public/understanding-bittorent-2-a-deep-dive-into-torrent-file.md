@@ -1,3 +1,16 @@
+---
+title: Understanding BitTorrent 2 A Deep Dive Into Torrent File
+tags:
+  - "Rust"
+  - "BitTorrent"
+private: false
+updated_at: ''
+id: null
+organization_url_name: null
+slide: false
+ignorePublish: false
+---
+
 ## Introduction 
 BitTorrent is one of the pioneering and most popular peer-to-peer (P2P) file sharing protocols. In the [last blog](https://www.nxted.co.jp/blog/blog_detail?id=40), I wrote about [Bencode](https://en.wikipedia.org/wiki/Bencode). Bencode is the encoding method used by BitTorrent for storing and transmitting loosely structured data. It's a binary format that serializes data types like integers, strings, lists, and dictionaries (key-value pairs). In this blog, we will try to parse a .torrent file.
 
