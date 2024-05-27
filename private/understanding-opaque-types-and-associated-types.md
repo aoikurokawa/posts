@@ -23,7 +23,7 @@ fn main() {
     let mut array = vec![iterator()];
     
     let x = Struct;
-    array.extend(x.iterator());
+    array.extend(vec![x.iterator()]);
 }
 ```
 
@@ -33,26 +33,23 @@ Forget about what is Iterator for now: the code seems to be fine because both `i
 The compiler raises an error for this code.
 
 ```bash
-error[E0271]: type mismatch resolving `<impl Iterator<Item = u32> as IntoIterator>::Item == impl Iterator<Item = u32>`
+error[E0271]: type mismatch resolving `<Vec<impl Iterator<Item = u32>> as IntoIterator>::Item == impl Iterator<Item = u32>`
    --> src/main.rs:21:18
     |
 1   | fn iterator() -> impl Iterator<Item = u32> {
     |                  ------------------------- the expected opaque type
 ...
-21  |     array.extend(x.iterator());
-    |           ------ ^^^^^^^^^^^^ expected opaque type, found `u32`
+12  |     fn iterator(&self) -> impl Iterator<Item = u32> {
+    |                           ------------------------- the found opaque type
+...
+21  |     array.extend(vec![x.iterator()]);
+    |           ------ ^^^^^^^^^^^^^^^^^^ expected opaque type, found a different opaque type
     |           |
     |           required by a bound introduced by this call
     |
-    = note: expected opaque type `impl Iterator<Item = u32>`
-                      found type `u32`
-note: the method call chain might not have had the expected associated types
-   --> src/main.rs:21:20
-    |
-20  |     let x = Struct;
-    |             ------ this expression has type `Struct`
-21  |     array.extend(x.iterator());
-    |                    ^^^^^^^^^^ `IntoIterator::Item` is `u32` here
+    = note: expected opaque type `impl Iterator<Item = u32>` (opaque type at <src/main.rs:1:18>)
+               found opaque type `impl Iterator<Item = u32>` (opaque type at <src/main.rs:12:27>)
+    = note: distinct uses of `impl Trait` result in different opaque types
 note: required by a bound in `extend`
    --> /playground/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/collect.rs:415:31
     |
@@ -60,12 +57,13 @@ note: required by a bound in `extend`
     |                               ^^^^^^^^ required by this bound in `Extend::extend`
 
 For more information about this error, try `rustc --explain E0271`.
+error: could not compile `playground` (bin "playground") due to 1 previous error
 ```
 
 The issue arises because each iterator method returns different types. This discrepancy is why the code does not compile. In this blog, we will explore the differences between these two concepts and understand their respective use cases.
 
 
-[playground]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&code=fn+iterator%28%29+-%3E+impl+Iterator%3CItem+%3D+u32%3E+%7B%0A++++vec%21%5B1%2C+2%2C+3%5D.into_iter%28%29%0A%7D%0A%0Atrait+Foo+%7B%0A++++fn+iterator%28%26self%29+-%3E+impl+Iterator%3CItem+%3D+u32%3E%3B%0A%7D%0A%0Astruct+Struct%3B%0A%0Aimpl+Foo+for+Struct+%7B%0A++++fn+iterator%28%26self%29+-%3E+impl+Iterator%3CItem+%3D+u32%3E+%7B%0A++++++++vec%21%5B4%2C+5%2C+6%5D.into_iter%28%29%0A++++%7D%0A%7D%0A%0Afn+main%28%29+%7B%0A++++let+mut+array+%3D+vec%21%5Biterator%28%29%5D%3B%0A++++%0A++++let+x+%3D+Struct%3B%0A++++array.extend%28x.iterator%28%29%29%3B%0A++++%0A++++println%21%28%22%7B%7D%22%2C+array%29%3B%0A%7D%0A
+[playground]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=faf3aac6ddc8329d32c27840a1a3de60
 
 ## Understanding Opaque Types
 
@@ -122,40 +120,36 @@ Opaque types are best suited for scenarios where you want to hide complex intern
 
 ## How to resolve the problem?
 
-Instead of using impl Trait in the trait method return type, we can define an associated type in the trait:
+To fix this, we can use trait objects (Box<dyn Iterator<Item = u32>>) instead of opaque types. Trait objects allow for dynamic dispatch and can be used in collections where the exact type implementing the trait is not known at compile time.
+
+Here is the modified code:
 
 ```rust
-trait Foo {
-    type Iter: Iterator<Item = u32>;
+fn iterator() -> Box<dyn Iterator<Item = u32>> {
+    Box::new(vec![1, 2, 3].into_iter())
+}
 
-    fn iterator(&self) -> Self::Iter;
+trait Foo {
+    fn iterator(&self) -> Box<dyn Iterator<Item = u32>>;
 }
 
 struct Struct;
 
 impl Foo for Struct {
-    type Iter = std::vec::IntoIter<u32>;
-
-    fn iterator(&self) -> Self::Iter {
-        vec![4, 5, 6].into_iter()
+    fn iterator(&self) -> Box<dyn Iterator<Item = u32>> {
+        Box::new(vec![4, 5, 6].into_iter())
     }
 }
 
-fn iterator() -> impl Iterator<Item = u32> {
-    vec![1, 2, 3].into_iter()
-}
-
 fn main() {
-    let mut array = vec![iterator()];
-
+    let mut array: Vec<Box<dyn Iterator<Item = u32>>> = vec![iterator()];
+    
     let x = Struct;
-    array.extend(x.iterator());
-
-    println!("{:?}", array); // Outputs the combined iterators' elements
+    array.extend(vec![x.iterator()]);
 }
 ```
 
-In this updated version, `Foo` defines an associated type `Iter`, which must implement `Iterator<Item = u32>`. Each implementation of `Foo` specifies the concrete type for `Iter`. This ensures that the `iterator` method of any `Foo` implementation returns a type that can be uniformly used.
+In this version, Box<dyn Iterator<Item = u32>> is used to store the iterators, allowing the different impl Iterator<Item = u32> types to coexist in the same vector.
 
 ## Practical Examples
 
