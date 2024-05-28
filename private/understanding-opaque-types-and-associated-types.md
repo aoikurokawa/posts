@@ -1,6 +1,6 @@
 ## Introduction
 
-Rust is a systems programming language known for its safety and concurrency features. Among its many advanced type system capabilities are opaque types and associated types, which play crucial roles in ensuring code abstraction and flexibility. One day, I spent quite some time figuring out why the following code wouldn't compile: 
+Rust is a systems programming language known for its safety and concurrency features. Among its many advanced type system capabilities are opaque types and associated types, which play crucial roles in ensuring code abstraction and flexibility. One day, I spent quite some time figuring out why the following code wouldn't compile:
 
 ```rust
 fn iterator() -> impl Iterator<Item = u32> {
@@ -29,7 +29,7 @@ fn main() {
 
 You can check this code at [playground].
 
-Forget about what is Iterator for now: the code seems to be fine because both `iterator` method returns the type of implementing `Iterator`. However, it is actually incorrect. 
+Forget about what is Iterator for now: the code seems to be fine because both `iterator` method returns the type of implementing `Iterator`. However, it is actually incorrect.
 The compiler raises an error for this code.
 
 ```bash
@@ -61,7 +61,6 @@ error: could not compile `playground` (bin "playground") due to 1 previous error
 ```
 
 The issue arises because each iterator method returns different types. This discrepancy is why the code does not compile. In this blog, we will explore the differences between these two concepts and understand their respective use cases.
-
 
 [playground]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=faf3aac6ddc8329d32c27840a1a3de60
 
@@ -108,11 +107,12 @@ Associated types are particularly useful for:
 
 ## Key Differences
 
-|Feature|Opaque Types|Associated Types|
-|Purpose|Encapsulation and hiding implemention details|Defining type relationships within traits|
-|Usage|Module and struct-level abstraction|Trait-level abstraction|
-|Example Context|Implementing APIs with hidden internals|Traits with type parameters|
-|Flexibility|Less flexible, more about hiding details|More flexible, allows varing types per implementation|
+| Feature         | Opaque Types                                    | Associated Types                                       |
+| --------------- | ----------------------------------------------- | ------------------------------------------------------ |
+| Purpose         | Encapsulation and hiding implementation details | Defining type relationships within traits              |
+| Usage           | Module and struct-level abstraction             | Trait-level abstraction                                |
+| Example Context | Implementing APIs with hidden internals         | Traits with type parameters                            |
+| Flexibility     | Less flexible, more about hiding details        | More flexible, allows varying types per implementation |
 
 ## Use Cases
 
@@ -120,9 +120,7 @@ Opaque types are best suited for scenarios where you want to hide complex intern
 
 ## How to resolve the problem?
 
-To fix this, we can use trait objects (Box<dyn Iterator<Item = u32>>) instead of opaque types. Trait objects allow for dynamic dispatch and can be used in collections where the exact type implementing the trait is not known at compile time.
-
-Here is the modified code:
+I think there are many for solution for this issue. One of solution is using dynamic dispatch. Instead of using `impl Trait` in the trait method return type, we can use `Box` type:
 
 ```rust
 fn iterator() -> Box<dyn Iterator<Item = u32>> {
@@ -146,10 +144,27 @@ fn main() {
     
     let x = Struct;
     array.extend(vec![x.iterator()]);
+
+    for iter in array {
+        for item in iter {
+            print!("{}", item);
+        }
+    }
 }
 ```
 
-In this version, Box<dyn Iterator<Item = u32>> is used to store the iterators, allowing the different impl Iterator<Item = u32> types to coexist in the same vector.
+In this updated version, using `Box<dyn Iterator<Item = u32>>` enables dynamic dispatch, allowing you to store and work with different types that implement the same trait.
+
+If we run this code, we would get like this
+
+```bash
+cargo run
+
+# 123456
+
+```
+
+you can check [here](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=e4fab276686e3a4e6ea53386eec8523d) as well.
 
 ## Practical Examples
 
