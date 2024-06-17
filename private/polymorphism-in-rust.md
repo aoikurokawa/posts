@@ -43,7 +43,7 @@ If we want to convert following code into Rust, we can write something like this
 Normally, `interface` in JS can be translated into `trait` in Rust. 
 ```rs
 trait SlotSource {
-	fn get_slot() -> u64;
+	fn get_slot(&self) -> u64;
 }
 ```
 
@@ -53,7 +53,7 @@ Define each struct `SlotSubscriber` and `OrderSubscriber`, and then implements `
 struct SlotSubscriber {}
 
 impl SlotSource for SlotSubscriber {
-	fn get_slot() -> u64 {
+	fn get_slot(&self) -> u64 {
 		...
 	}
 }
@@ -61,7 +61,7 @@ impl SlotSource for SlotSubscriber {
 struct OrderSubscriber {}
 
 impl SlotSource for OrderSubscriber {
-		fn get_slot() -> u64 {
+		fn get_slot(&self) -> u64 {
 			...
 		}
 }
@@ -69,13 +69,13 @@ impl SlotSource for OrderSubscriber {
 
 Define `FooSubscriber`. 
 
-```
-struct FooSubscriber {
-	slot_source: SlotSource;
+```rs
+struct FooSubscriber<T: SlotSource> {
+	slot_source: T;
 }
 
-impl FooSubscriber {
-	pub fn new(slot_source: SlotSource) -> Self {
+impl<T: SlotSource> FooSubscriber<T> {
+	pub fn new(slot_source: T) -> Self {
 		Self {
 			slot_source
 		}
