@@ -1,4 +1,4 @@
-#### Introduction
+## Introduction
 Polymorphism is a fundamental concept in object-oriented programming that allows a single interface to represent different underlying forms (data types). In Rust, polymorphism is typically achieved using traits, which are similar to interfaces in other languages. Traits enable us to define shared behavior that different types can implement, allowing for flexible and reusable code.
 
 However, while traits are a powerful feature of Rust, they are not the only way to achieve polymorphism. After reading this [blog], Enums might be the another way to achieve polymorphism for certain scenarios. Enums allow us to define a type by enumerating its possible variants, each of which can hold different data and have different behaviors.
@@ -9,7 +9,7 @@ By the end of this post, you will have a deeper understanding of how to leverage
 
 [blog](https://www.mattkennedy.io/blog/rust_polymorphism/)
 
-#### JavaScript
+## JavaScript
 
 Before diving into Rust, let's consider a common scenario in JavaScript.
 Imagine you have an interface `SlotSource` that defines a method `getSlot`. Various classes implements this interface, each providing their own version of the `getSlot` method:
@@ -49,7 +49,7 @@ export class FooSubscriber {
 
 This approach, using interfaces and polymorphism, is common in many object-oriented languages like JavaScript. But what if we want to achieve similar polymorphic behavior in Rust?
 
-#### Traits and Polymorphism in Rust
+## Traits and Polymorphism in Rust
 
 If we want to convert following code into Rust, we can write something like this.
 Normally, `interface` in JS can be translated into `trait` in Rust. 
@@ -115,7 +115,7 @@ fn main() {
 }
 ```
 
-#### Polymorphism with Enums
+## Polymorphism with Enums
 
 While traits are a common way to achieve polymorphism in Rust, we can also use enums for certain cases. Enums in Rust allow us to define a type that can be one of several variants, each of which can hold different data and have different behaviors. This can be particularly useful when the set of possible types is fixed and known in advance.
 
@@ -180,7 +180,7 @@ fn main() {
 }
 ```
 
-#### Comparing Enums and Traits
+## Comparing Enums and Traits
 
 Using enums for polymorphism can be beneficial when the set of possible types is known and fixed. Enums provide a simpler and more explicit way to handle multiple types, and they can be more efficient since the variants are all part of the same type.
 
@@ -189,11 +189,11 @@ However, traits offer more flexibility and extensibility. With traits, you can e
 In summary, both traits and enums have their place in Rust. Understanding the strengths and limitations of each approach will help you choose the right tool for your specific use case.
 
 
-#### Benchmarking
+## Benchmarking
 
 To compare the performance of trait-based(dynamic dispatch one and static dispatch one) and enum-based polymorphism in Rust, I conducted a series of benchmarks. 
 
-##### Trait-based(dynamic dispatch)
+### Trait-based(dynamic dispatch)
 
 ```rs
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
@@ -253,7 +253,7 @@ criterion_group!(benches, benchmark_traits_dynamic);
 criterion_main!(benches);
 ```
 
-##### Trait-based(static dispatch)
+### Trait-based(static dispatch)
 
 ```rs
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
@@ -313,7 +313,7 @@ criterion_group!(benches, benchmark_traits);
 criterion_main!(benches);
 ```
 
-##### Enum-based
+### Enum-based
 
 ```rs
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
@@ -367,7 +367,7 @@ criterion_main!(benches);
 
 Here are the results:
 
-##### Trait-based(dynamic dispatch)
+### Trait-based(dynamic dispatch)
 
 Performance regressed significantly compared to the static dispatch, indicating the overhead associated with dynamic dispatch.
 
@@ -388,7 +388,7 @@ Found 6 outliers among 100 measurements (6.00%)
   3 (3.00%) high severe
 ```
 
-##### Trait-based(static dispatch)
+### Trait-based(static dispatch)
 
 Performance improved dramatically compared to dynamic dispatch, highlighting the benefits of static dispatch when using traits.
 
@@ -410,7 +410,7 @@ Found 8 outliers among 100 measurements (8.00%)
   4 (4.00%) high severe
 ```
 
-##### Enum-based
+### Enum-based
 
 Performance remained stable with no significant change detected. Enums provide a more consistent and efficient solution compared to dynamic dispatch traits.
 
@@ -433,11 +433,11 @@ Found 13 outliers among 100 measurements (13.00%)
   8 (8.00%) high severe
 ```
 
-#### Conclusion
+## Conclusion
 
 In this blog post, we've explored two different approaches to achieving polymorphism in Rust: using traits and using enums. We started with a familiar example in JavaScript and translated it into Rust using both traits and enums. We then set up benchmarks to compare the performance of these implementations.
 
 Thank you for reading! I hope this exploration of polymorphism in Rust has been informative and helpful.
 
-#### Resources
+## Resources
 - https://www.mattkennedy.io/blog/rust_polymorphism/
