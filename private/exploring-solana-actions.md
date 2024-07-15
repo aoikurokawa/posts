@@ -93,6 +93,90 @@ cargo r
 
 [axum README]: https://docs.rs/axum/latest/axum/
 
+### Endpoints
+
+Following the document, we need three endpoints to handle `GET` and `POST` request and one for returning json file. 
+
+> build an API endpoint for the GET request that returns the metadata about your Action
+> create an API endpoint that accepts the POST request and returns the signable transaction for the user
+> ensure your application has a valid actions.json file at the root of your domain
+
+So let's rewrite the routing.
+
+```rs
+#[tokio::main]
+async fn main() {
+    let app = Router::new()
+        .route("/actions.json", get())
+        .route("/api/actions/transfer-sol", get())
+        .route("/api/actions/transfer-sol", post());
+
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
+}
+```
+
+### Cors
+
+To satisfy this requirements, we need to specify the `cors`.
+
+> ensure your application responds with the required Cross-Origin headers on all Action endpoints, including the actions.json file
+
+We install `tower-http` to define `cors`
+
+```bash
+cargo add tower-http --features full
+```
+
+```rs
+#[tokio::main]
+async fn main() {
+    let cors = CorsLayer::new()
+        .allow_methods([Method::GET, Method::POST, Method::OPTIONS])
+        .allow_headers([
+            CONTENT_TYPE,
+            AUTHORIZATION,
+            CONTENT_ENCODING,
+            ACCEPT_ENCODING,
+        ])
+        .allow_origin(Any);
+
+    let app = Router::new()
+        .route("/actions.json", get())
+        .route("/api/actions/transfer-sol", get())
+        .route("/api/actions/transfer-sol", post());
+
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
+}
+```
+
+### Get request actions json
+
+> The purpose of the actions.json file allows an application to instruct clients on what website URLs support Solana Actions and provide a mapping that can be used to perform GET requests to an Actions API server.
+
+```
+async fn get_request_actions_json() -> impl IntoResponse {
+    Json(json!({
+        "rules": [
+            {
+                "pathPattern": "/*",
+                "apiPath": "/api/actions/*",
+            },
+            {
+                "pathPattern": "/api/actions/**",
+                "apiPath": "/api/actions/**",
+            },
+        ],
+    }))
+}
+
+```
+
+### Get request handler
+
+### Post request handler
+
 
 
 ## Resources
