@@ -154,7 +154,7 @@ solana program run <PROGRAM_ID> <INPUT_DATA>
 Where <PROGRAM_ID> is your deployed program ID and <INPUT_DATA> is the value you want to store.
 
 
-`` Conclusion
+## Conclusion
 
 Writing a smart contract on Solana is an exciting journey. With its unique architecture, Solana offers developers a powerful platform to build high-performance dApps. This guide covers the basics, but there’s much more to explore—like cross-program invocations, CPI, and custom error handling. As you dive deeper, you’ll discover the nuances and possibilities of Solana’s programming model.
 
