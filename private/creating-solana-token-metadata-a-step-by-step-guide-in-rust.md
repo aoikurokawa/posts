@@ -7,39 +7,61 @@ By the end of this blog, you'll have a clear grasp of how to leverage the Metapl
 
 ## Getting started
 
-### Set up dir
+### Set Up Directory Structure
 
-Create a parent directory.
+To begin building your Solana program, we’ll first set up a structured directory environment. This will help keep the project organized as you develop the smart contract, the SDK, and the integration tests.
+
+1. Create the Parent Directory
+
+Start by creating the main directory for your project and navigating into it:
 
 ```bash
 cargo new --lib vault && cd vault
 ```
 
-Remove `src` directory.
+This command creates a new library project called vault and moves you into the vault directory.
+
+2. Remove the Default `src` Directory.
+
+Since we'll be creating separate directories for different parts of the project, you can remove the default `src` directory:
 
 ```bash
 rm -rf src
 ```
 
-Initialize a program(smart contract) directory
+3. Initialize the Program(smart contract) Directory
+
+Next, create a new library for your Solana program, which will contain the smart contract logic:
 
 ```bash
 cargo new --lib vault_program
 ```
 
-Initialize a sdk directory
+This will create a `vault_program` directory with its own `src` folder where the main contract code will reside.
+
+4. Initialize the SDK Directory
+
+Now, create a separate library for the SDK, which will provide a set of tools and utilities to interact with the smart contract:
 
 ```bash
 cargo new --lib vault_sdk
 ```
 
-Initialize a integration test directory
+This step creates a `vault_sdk` directory with its own `src` folder for the SDK code.
+
+5. Initialize the Integration Test Directory
+
+Finally, create a directory dedicated to integration tests. These tests will ensure that all parts of your project work together as expected:
 
 ```bash
 cargo new --lib integration_tests
 ```
 
-Folder structure like:
+This command sets up an `integration_tests` directory with its own `src` folder.
+
+6. Resulting Folder Structure
+
+After following these steps, your project structure should look like this:
 
 ```txt
 |.
@@ -52,9 +74,15 @@ Folder structure like:
     └── src
 ```
 
+With this setup, you have a clean and organized environment that separates the smart contract logic, SDK tools, and integration tests, making your project easier to manage and scale as it grows.
+
 ### Install dependencies
 
-Write a dependencies that we are going to use in `Cargo.toml`.
+With our directory structure in place, the next step is to set up the necessary dependencies for our project. We'll specify these dependencies in the `Cargo.toml` file at the root of our workspace.
+
+1. Set up the Workspace
+
+In the `Cargo.toml` file, we'll define our workspace and list the member projects. This allows us to manage the dependencies for all sub-projects in a centralized manner.
 
 ```toml
 [workspace]
@@ -65,7 +93,13 @@ members = [
 ]
 
 resolver = "2"
+```
 
+2. Define Workspace Dependencies
+
+Next, we'll add the dependencies that our project requires. These include libraries for interacting with Solana, serializing data, and handling tokens:
+
+```toml
 [workspace.dependencies]
 borsh = { version = "0.10.3" }
 solana-sdk = "~1.18"
@@ -76,10 +110,23 @@ vault-program = { path = "vault_program", version = "=0.0.1" }
 vault-sdk = { path = "vault_sdk", version = "=0.0.1" }
 ```
 
-After writing the file, make sure the program can be compiled.
+3. Compile the Program
+
+After specifying the dependencies, it’s important to ensure everything is set up correctly by compiling the program. This will fetch the dependencies and verify that there are no issues:
+
+```bash
+cargo build
+```
 
 ### SDK
 
+Now that we’ve set up our directory structure and installed dependencies, let’s focus on creating the SDK for our vault program. The SDK will serve as a collection of utilities, data structures, and functions that interact with the on-chain program.
+
+1. Directory Structure
+
+First , here's what the directory structure for the SDK should look like:
+
+```txt
 vault_sdk
 ├── Cargo.toml
 └── src
@@ -87,9 +134,11 @@ vault_sdk
     ├── instruction.rs
     ├── lib.rs
     └── sdk.rs
+```
 
+2. Defining Dependencies
 
-Inside SDK, we would use `borsh` and `solana-program`.
+Inside the `Cargo.toml` of the SDK, we’ll define the necessary dependencies. For the SDK, we’re going to use borsh for serialization and solana-program for interacting with the Solana blockchain.
 
 ```toml
 [package]
@@ -102,7 +151,9 @@ borsh = { workspace = true }
 solana-program = { workspace = true }
 ```
 
-We have 3 modules in SDK, `inline_token_metadata`, `instruction`, `sdk`. So we write like this in `lib.rs`.
+3. Setting Up Modules
+
+We have three modules in the SDK: `inline_mpl_token_metadata`, `instruction`, and `sdk`. These modules are declared in the lib.rs file:
 
 ```rust
 pub mod inline_mpl_token_metadata;
@@ -110,7 +161,9 @@ pub mod instruction;
 pub mod sdk;
 ```
 
-Inside `inline_mpl_token_metadata.rs`, I just copied from [solana program library](https://github.com/solana-labs/solana-program-library/blob/master/stake-pool/program/src/inline_mpl_token_metadata.rs).
+4.  `inline_mpl_token_metadata.rs` Module
+
+The `inline_mpl_token_metadata.rs` module is an inline version of the Metaplex Token Metadata library, which is necessary to avoid a direct dependency on `mpl-token-metadata`. Here’s a simplified version of the code:
 
 ```rust
 //! Inlined MPL metadata types to avoid a direct dependency on
@@ -253,7 +306,9 @@ pub mod state {
 }
 ```
 
-Define the instruction in `instruction.rs`.
+5. `instruction.rs` Module
+
+The `instruction.rs` module defines the instructions that can be executed by our vault program. In this case, we’re defining a single instruction for creating token metadata:
 
 ```rust
 use borsh::{BorshDeserialize, BorshSerialize};
@@ -268,7 +323,9 @@ pub enum VaultInstruction {
 }
 ```
 
-When we send the transaction, we need the interface.
+6. `sdk.rs` Module
+
+Finally, the `sdk.rs` module provides an interface for sending transactions. This function builds the instruction for creating token metadata and returns it as a Solana Instruction object:
 
 ```rust
 use borsh::BorshSerialize;
@@ -314,6 +371,12 @@ pub fn create_token_metadata(
 
 ### Smart contract
 
+In this section, we’ll focus on the core logic of our Solana program by implementing the smart contract. This program will handle the creation of token metadata, leveraging the SDK we built earlier.
+
+1. Directory Structure
+
+The directory structure for the smart contract should look like this:
+
 ```txt
 vault_program/
 ├── Cargo.toml
@@ -322,7 +385,14 @@ vault_program/
     └── lib.rs
 ```
 
-We are going to use bunch of dependencies.
+We have two key files here:
+
+- `create_token_metadata.rs`: Contains the logic for creating token metadata.
+- `lib.rs`: Acts as the entry point of the program and routes instructions to the appropriate processing functions.
+
+2. Defining Dependencies
+
+The `Cargo.toml` file for the smart contract lists the dependencies required for building and interacting with the Solana blockchain.
 
 ```toml
 [package]
@@ -349,7 +419,9 @@ spl-token-2022 = { workspace = true }
 vault-sdk = { workspace = true }
 ```
 
-Inside `lib.rs`:
+3. Setting Up the Entry Point in `lib.rs`:
+
+The `lib.rs` file serves as the entry point for the program. It defines the process_instruction function, which is responsible for handling incoming instructions.
 
 ```rust
 mod create_token_metadata;
@@ -389,8 +461,16 @@ pub fn process_instruction(
 }
 ```
 
-Inside `create_token_metadata.rs`:
+4. Implementing `create_token_metadata.rs`:
 
+This file contains the logic for creating a new token mint and its associated metadata. The process_create_token_metadata function performs the following steps:
+
+- Account Validation: Ensure the correct accounts are provided and unwrap them from the accounts array.
+- Create Mint Account: Invoke the system program to create a new account that will act as the mint for the token.
+- Initialize Mint: Initialize the newly created account as a standard SPL Token Mint.
+- Create Metadata Account: Invoke the Metaplex Token Metadata program to create and initialize the metadata account associated with the mint.
+
+Here's the code:
 ```rust
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, msg, program::invoke,
@@ -479,10 +559,13 @@ pub fn process_create_token_metadata(
 
 ### Integration Tests
 
-We just finished writing a program that initialize mint account and token metadata account.
-Let's check the program is working properly.
+Now that we’ve completed writing the program to initialize the mint account and token metadata account, it's time to verify that our smart contract works as expected. We'll do this by writing integration tests.
 
-Before writing this blog, I was curious about [LiteSVM](https://github.com/LiteSVM/litesvm). So we are going to use it.
+Before diving into the tests, I was curious about [LiteSVM](https://github.com/LiteSVM/litesvm), a lightweight Solana Virtual Machine, so we'll use it for our integration tests.
+
+1. Directory Structure
+
+First, let's set up the directory structure for our integration tests:
 
 ```txt
 integration_tests/
@@ -498,6 +581,10 @@ integration_tests/
         ├── create_token_metadata.rs
         └── mod.rs
 ```
+
+2. Define Dependencies
+
+In the `Cargo.toml` file for the integration tests, we’ll specify the necessary dependencies:
 
 ```toml
 [package]
@@ -518,6 +605,8 @@ vault-program = { workspace = true }
 vault-sdk = { workspace = true }
 ```
 
+3. Setting Up the MPL Token Metadata Program
+
 Since we are going to use built-in program `mpl_token_metadata` program.
 So we will download the so file from [spl repo](https://github.com/solana-labs/solana-program-library/blob/master/stake-pool/program/tests/fixtures/mpl_token_metadata.so).
 Then, move the file under fixture folder.
@@ -526,18 +615,25 @@ Then, move the file under fixture folder.
 mv {place you downloaded}/mpl_token_metadata.so integration_tests/fixtures
 ```
 
-Inside `tests.rs`, define 2 modules.
+4. Setting Up the Test Modules
+
+Inside `tests.rs`, define two modules to organize the test logic:
 
 ```rust
 mod helpers;
 mod vault;
 ```
 
-#### Helpers
+- `helpers`: Contains utility functions and structs to aid in testing.
+- `vault`: Contains the actual test cases for the vault program
+
+5. Helpers Module
 
 ```rust
 pub mod token;
 ```
+
+In `token.rs`:
 
 ```rust
 use borsh::BorshDeserialize;
@@ -558,7 +654,7 @@ pub struct Metadata {
 }
 ```
 
-#### Write a test code  
+6. Writing the Test Code
 
 `mod.rs`
 
@@ -566,7 +662,7 @@ pub struct Metadata {
 mod create_token_metadata;
 ```
 
-`create_token_metadata.rs`
+`create_token_metadata.rs`:
 
 ```rust
 #[cfg(test)]
@@ -653,6 +749,18 @@ mod tests {
         assert!(metadata.uri.starts_with(uri));
     }
 }
+```
+
+7. Running the Tests
+
+After setting up the integration tests, you can run them using Cargo:
+
+```bash
+cargo-build-sbf
+```
+
+```bash
+cargo nextest run --all-features
 ```
 
 ## Resources
