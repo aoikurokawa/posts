@@ -41,6 +41,7 @@ cargo new --lib integration_tests
 
 Folder structure like:
 
+```txt
 |.
 ├── integration_tests
 |
@@ -49,7 +50,7 @@ Folder structure like:
 |
 └── vault_sdk
     └── src
-
+```
 
 ### Install dependencies
 
@@ -313,11 +314,13 @@ pub fn create_token_metadata(
 
 ### Smart contract
 
+```txt
 vault_program/
 ├── Cargo.toml
 └── src
     ├── create_token_metadata.rs
     └── lib.rs
+```
 
 We are going to use bunch of dependencies.
 
@@ -481,6 +484,7 @@ Let's check the program is working properly.
 
 Before writing this blog, I was curious about [LiteSVM](https://github.com/LiteSVM/litesvm). So we are going to use it.
 
+```txt
 integration_tests/
 ├── Cargo.toml
 └── tests
@@ -493,6 +497,7 @@ integration_tests/
     └── vault
         ├── create_token_metadata.rs
         └── mod.rs
+```
 
 ```toml
 [package]
