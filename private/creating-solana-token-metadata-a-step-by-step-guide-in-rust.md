@@ -708,9 +708,9 @@ mod tests {
         let mint_account = Keypair::new();
 
         // Create token metadata
-        let name = "restaking JTO";
-        let symbol = "rJTO";
-        let uri = "https://www.jito.network/restaking/";
+        let name = "";
+        let symbol = "";
+        let uri = "";
 
         let metadata_pubkey =
             inline_mpl_token_metadata::pda::find_metadata_account(&mint_account.pubkey()).0;
