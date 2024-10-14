@@ -6,7 +6,7 @@ In decentralized systems, maintaining security and fairness is crucial to the in
 
 To ensure that slashing is done fairly and only when appropriate, a crucial component known as the resolver plays a key role. The resolver is responsible for reviewing and verifying slashing requests, determining if they are valid, and deciding whether to execute the slash or veto it. This careful decision-making process is essential to avoid unjust penalties and maintain trust in the network.
 
-In this blog, we will dive into the role of the resolver in a restaking protocol, exploring how it interacts with slashing requests and ensures fair outcomes. We'll discuss the resolver's decision-making process, the challenges it addresses, and why it's a critical piece of protocol security in decentralized systems like Solana.
+In this blog, we will dive into the role of the resolver in a restaking protocol, exploring how it interacts with slashing requests and ensures fair outcomes. We'll discuss the resolver's decision-making process, the challenges it addresses, and why it's a critical piece of protocol security in decentralized systems.
 
 ## What is Restaking Protocol?
 
@@ -26,8 +26,8 @@ Unlike the slasher, which acts as the enforcer by applying penalties, the resolv
 
 The key responsibilities of the resolver include:
 
-    Evaluating Slash Requests: When a slashing request is submitted, the resolver examines the conditions, checking if the validator in question truly violated the protocol's rules.
-    Making Decisions: After evaluating the evidence, the resolver either approves the request, signaling the slasher to penalize the validator, or vetoes it, preventing an unjustified slash.
+- Evaluating Slash Requests: When a slashing request is submitted, the resolver examines the conditions, checking if the validator in question truly violated the protocol's rules.
+- Making Decisions: After evaluating the evidence, the resolver either approves the request, signaling the slasher to penalize the validator, or vetoes it, preventing an unjustified slash.
 
 In short, the resolver ensures that validators are penalized only when they deserve it, maintaining the balance between security and fairness in the protocol.
 
@@ -35,13 +35,13 @@ In short, the resolver ensures that validators are penalized only when they dese
 
 Here’s how the resolver fits into a typical slash request flow in a restaking protocol:
 
-    Slash Proposal Submitted: A participant (the proposer) submits a request, known as ProposeSlash, to penalize a validator for alleged misbehavior. This could include offenses like double-signing or prolonged downtime.
+- Slash Proposal Submitted: A participant (the proposer) submits a request, known as ProposeSlash, to penalize a validator for alleged misbehavior. This could include offenses like double-signing or prolonged downtime.
 
-    Resolver Evaluates the Request: The resolver takes over from here, reviewing the evidence provided in the slash proposal. It checks the validator's behavior, such as their block signatures or activity logs, to determine if an offense has occurred.
+- Resolver Evaluates the Request: The resolver takes over from here, reviewing the evidence provided in the slash proposal. It checks the validator's behavior, such as their block signatures or activity logs, to determine if an offense has occurred.
 
-    Resolver Decides: Based on its evaluation, the resolver makes a critical decision:
-        Execute the Slash: If the validator violated the rules, the resolver instructs the slasher to enforce the penalty.
-        Veto the Slash: If the evidence doesn't support the claim, the resolver vetoes the request, preventing an unjust penalty.
+- Resolver Decides: Based on its evaluation, the resolver makes a critical decision:
+    1. Execute the Slash: If the validator violated the rules, the resolver instructs the slasher to enforce the penalty.
+    2. Veto the Slash: If the evidence doesn't support the claim, the resolver vetoes the request, preventing an unjust penalty.
 
 The resolver’s decision-making power is central to the slashing process, ensuring that slashing happens only when the conditions for it are properly met. This avoids unnecessary penalties and builds trust in the protocol.
 
@@ -49,9 +49,9 @@ The resolver’s decision-making power is central to the slashing process, ensur
 
 The resolver includes several safeguards to ensure that the slashing process is fair, transparent, and verifiable:
 
-    Prevents Malicious or Unjustified Slashing: The resolver plays a key role in preventing abuse. Without it, bad actors could submit false slashing requests, targeting innocent validators. By thoroughly reviewing all evidence, the resolver ensures that only valid requests are processed, protecting validators from unfair penalties.
+- Prevents Malicious or Unjustified Slashing: The resolver plays a key role in preventing abuse. Without it, bad actors could submit false slashing requests, targeting innocent validators. By thoroughly reviewing all evidence, the resolver ensures that only valid requests are processed, protecting validators from unfair penalties.
 
-    Transparency and Verifiability: The resolver's decision-making process is open and auditable. Every decision—whether to slash or veto—is logged on-chain, making the entire process transparent to the community. This promotes trust among validators and participants, as they can verify the fairness of each decision.
+- Transparency and Verifiability: The resolver's decision-making process is open and auditable. Every decision—whether to slash or veto—is logged on-chain, making the entire process transparent to the community. This promotes trust among validators and participants, as they can verify the fairness of each decision.
 
 By applying these safeguards, the resolver helps protect the protocol from abuse and strengthens the trust between validators, participants, and stakeholders.
 
@@ -59,11 +59,11 @@ By applying these safeguards, the resolver helps protect the protocol from abuse
 
 Implementing a resolver for a restaking protocol comes with its own set of challenges. Here are a few key technical and logical issues I encountered:
 
-    Edge Cases: Handling edge cases, such as validators who exhibit borderline behavior (e.g., occasional downtime), is tricky. A balance must be struck between protecting the network and being overly strict. To overcome this, we implemented threshold-based evaluations for slashing requests, ensuring validators aren't penalized for minor infractions.
+- Edge Cases: Handling edge cases, such as validators who exhibit borderline behavior (e.g., occasional downtime), is tricky. A balance must be struck between protecting the network and being overly strict. To overcome this, we implemented threshold-based evaluations for slashing requests, ensuring validators aren't penalized for minor infractions.
 
-    Performance Optimization: Evaluating evidence, especially when working with large datasets (e.g., block signatures or validator history), can become slow. To address this, we optimized our resolver by batching evidence review and ensuring that only relevant data is pulled when needed.
+- Performance Optimization: Evaluating evidence, especially when working with large datasets (e.g., block signatures or validator history), can become slow. To address this, we optimized our resolver by batching evidence review and ensuring that only relevant data is pulled when needed.
 
-    Security: Ensuring that the resolver itself isn’t compromised is paramount. We used multi-signature verification and added additional layers of cryptographic validation to ensure that slashing requests and resolver decisions cannot be tampered with.
+- Security: Ensuring that the resolver itself isn’t compromised is paramount. We used multi-signature verification and added additional layers of cryptographic validation to ensure that slashing requests and resolver decisions cannot be tampered with.
 
 These challenges were addressed through careful design, testing, and refinement, ensuring that the resolver operates efficiently and securely.
 
@@ -73,8 +73,8 @@ The resolver is a critical component that ensures the integrity and security of 
 
 Looking ahead, there are several enhancements to consider:
 
-    Improving Decision Algorithms: We plan to refine the decision-making process with more sophisticated evaluation algorithms, possibly incorporating machine learning to predict patterns of validator behavior.
-    Adding More Safeguards: To further enhance security, future updates could include additional mechanisms, such as delay windows between the request and execution of a slash, giving validators time to defend themselves if needed.
+- Improving Decision Algorithms: We plan to refine the decision-making process with more sophisticated evaluation algorithms, possibly incorporating machine learning to predict patterns of validator behavior.
+- Adding More Safeguards: To further enhance security, future updates could include additional mechanisms, such as delay windows between the request and execution of a slash, giving validators time to defend themselves if needed.
 
 These enhancements aim to further protect the protocol and strengthen trust among its participants.
 
@@ -83,3 +83,8 @@ These enhancements aim to further protect the protocol and strengthen trust amon
 In decentralized protocols, maintaining fairness and preventing abuse is key to sustaining the network’s security and trust. The resolver plays an essential role in this by acting as the decision-making authority in slashing events. It ensures that slashing only occurs when necessary, protecting validators from unjust penalties while safeguarding the network from bad actors.
 
 If you're working on your own decentralized protocol, it’s worth considering how your resolver module is designed. A well-built resolver not only enhances protocol security but also fosters trust and participation from stakeholders. Make sure to think critically about the design, implementation, and transparency of your slashing mechanism to ensure fairness across the board.
+
+## References
+
+- https://docs.symbiotic.fi/
+- https://blog.symbiotic.fi/resolvers/
