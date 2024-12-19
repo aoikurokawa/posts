@@ -19,10 +19,12 @@ The Core is where we define the data structures (accounts) that store essential 
 
 We have 2 main accounts in whitelist program.
 
-- Whitelist
-- WhitelistEntry
+- Whitelist: The base account representing the whitelist.
+- WhitelistEntry: An account derived from the Whitelist that holds specific whitelisted addresses.
 
 ##### Whitelist
+
+The `Whitelist` account stores the administrator's public key responsible for managing the whitelist.
 
 ```rust
 /// The "base" whitelist account upon which all whitelist entry account addresses are derived
@@ -35,6 +37,12 @@ pub struct Whitelist {
 ```
 
 ##### WhitelistEntry
+
+The `WhitelistEntry` account links a specific address to the parent Whitelist. It includes:
+
+- The parent Whitelist reference.
+- The whitelisted address.
+- A rate-limiting mechanism for controlled interactions.
 
 ```rust
 /// a PDA derived from the address of the account to add and the base whitelist
@@ -63,12 +71,14 @@ The Program component handles the business logic and defines instructions (funct
 
 We have 4 main instructions:
 
-- InitializeWhitelist
-- AddToWhitelist
-- CheckWhitelisted
-- RemoveFromWhitelist
+- InitializeWhitelist: Sets up a new whitelist account.
+- AddToWhitelist: Adds an address to the whitelist.
+- CheckWhitelisted: Verifies if an address is whitelisted.
+- RemoveFromWhitelist: Removes an address from the whitelist.
 
 ##### InitializeWhitelist
+
+This instruction creates the base `Whitelist` account and assigns an admin.
 
 ```rust
 use jito_bytemuck::{AccountDeserialize, Discriminator};
@@ -127,6 +137,8 @@ pub fn process_initialize_whitelist(
 ```
 
 ##### AddToWhitelist
+
+This instruction adds a new address to the whitelist by creating a `WhitelistEntry` account.
 
 ```rust
 use jito_bytemuck::{AccountDeserialize, Discriminator};
@@ -199,14 +211,84 @@ pub fn process_add_to_whitelist(
 
 ##### CheckWhitelisted
 
-```rust
+Verifies if a specific address is present in the whitelist.
 
+```rust
+use jito_bytemuck::AccountDeserialize;
+use jito_jsm_core::loader::load_signer;
+use ncn_portal_core::{whitelist::Whitelist, whitelist_entry::WhitelistEntry};
+use solana_program::{
+    account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
+    pubkey::Pubkey,
+};
+
+pub fn process_check_whitelisted(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
+    let [whitelist_info, whitelist_entry_info, whitelisted_info] = accounts else {
+        return Err(ProgramError::NotEnoughAccountKeys);
+    };
+
+    Whitelist::load(program_id, whitelist_info, false)?;
+
+    load_signer(whitelisted_info, false)?;
+
+    WhitelistEntry::load(
+        program_id,
+        whitelist_info.key,
+        whitelisted_info.key,
+        whitelist_entry_info,
+        false,
+    )?;
+    let whitelist_entry_data = whitelist_entry_info.data.borrow();
+    let whitelist_entry = WhitelistEntry::try_from_slice_unchecked(&whitelist_entry_data)?;
+
+    whitelist_entry.check_parent(whitelist_info.key)?;
+    whitelist_entry.check_whitelisted(whitelisted_info.key)?;
+
+    Ok(())
+}
 ```
 
 ##### RemoveFromWhitelist
 
-```rust
+Deletes a `WhitelistEntry`, effectively removing the address from the whitelist.
 
+```rust
+use jito_jsm_core::{
+    close_program_account,
+    loader::{load_signer, load_system_program},
+};
+use ncn_portal_core::{whitelist::Whitelist, whitelist_entry::WhitelistEntry};
+use solana_program::{
+    account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
+    pubkey::Pubkey,
+};
+
+pub fn process_remove_from_whitelist(
+    program_id: &Pubkey,
+    accounts: &[AccountInfo],
+) -> ProgramResult {
+    let [whitelist_info, whitelist_entry_info, whitelisted_info, admin_info, system_program] =
+        accounts
+    else {
+        return Err(ProgramError::NotEnoughAccountKeys);
+    };
+
+    Whitelist::load(program_id, whitelist_info, false)?;
+    WhitelistEntry::load(
+        program_id,
+        whitelist_info.key,
+        whitelisted_info.key,
+        whitelist_entry_info,
+        false,
+    )?;
+
+    load_signer(admin_info, false)?;
+    load_system_program(system_program)?;
+
+    close_program_account(program_id, whitelist_entry_info, admin_info)?;
+
+    Ok(())
+}
 ```
 
 
@@ -218,6 +300,90 @@ The SDK (Software Development Kit) simplifies interaction with the Solana progra
 
 #### Instructions
 
+```rust
+use borsh::{BorshDeserialize, BorshSerialize};
+use shank::ShankInstruction;
+
+#[derive(Debug, BorshSerialize, BorshDeserialize, ShankInstruction)]
+pub enum NcnPortalInstruction {
+    /// Initializes global configuration
+    #[account(0, writable, name = "whitelist")]
+    #[account(1, writable, signer, name = "admin")]
+    #[account(2, name = "system_program")]
+    InitializeWhitelist,
+
+    /// Initializes global configuration
+    #[account(0, name = "whitelist")]
+    #[account(1, writable, name = "whitelist_entry")]
+    #[account(2, name = "whitelisted")]
+    #[account(3, writable, signer, name = "admin")]
+    #[account(4, name = "system_program")]
+    AddToWhitelist { rate_limiting: u64 },
+
+    /// Check Whitelist
+    #[account(0, name = "whitelist")]
+    #[account(1, name = "whitelist_entry")]
+    #[account(2, signer, name = "whitelisted")]
+    CheckWhitelisted,
+
+    /// Removed from Whitelist
+    #[account(0, name = "whitelist")]
+    #[account(1, writable, name = "whitelist_entry")]
+    #[account(2, name = "whitelisted_info")]
+    #[account(3, signer, name = "admin_info")]
+    #[account(4, name = "system_program")]
+    RemoveFromWhitelist,
+
+    /// Set RateLimiting
+    #[account(0, name = "whitelist")]
+    #[account(1, writable, name = "whitelist_entry")]
+    #[account(2, signer, name = "admin")]
+    SetRateLimiting { rate_limiting: u64 },
+}
+```
 
 #### Errors
 
+```rust
+use solana_program::program_error::ProgramError;
+use thiserror::Error;
+
+#[derive(Debug, Error, PartialEq, Eq)]
+pub enum NcnPortalError {
+    #[error("NcnPortalWhitelistAdminInvalid")]
+    NcnPortalWhitelistAdminInvalid,
+    #[error("NcnPortalParentInvalid")]
+    NcnPortalParentInvalid,
+    #[error("NcnPortalWhitelistedInvalid")]
+    NcnPortalWhitelistedInvalid,
+
+    #[error("ArithmeticOverflow")]
+    ArithmeticOverflow = 3000,
+    #[error("ArithmeticUnderflow")]
+    ArithmeticUnderflow,
+    #[error("DivisionByZero")]
+    DivisionByZero,
+}
+
+impl From<NcnPortalError> for ProgramError {
+    fn from(e: NcnPortalError) -> Self {
+        Self::Custom(e as u32)
+    }
+}
+
+impl From<NcnPortalError> for u64 {
+    fn from(e: NcnPortalError) -> Self {
+        e as Self
+    }
+}
+
+impl From<NcnPortalError> for u32 {
+    fn from(e: NcnPortalError) -> Self {
+        e as Self
+    }
+}
+```
+
+## Conclusion
+
+This comprehensive approach modularizes the whitelist program into Core, Program, and SDK, ensuring maintainability and scalability. The code examples provided demonstrate practical implementations for real-world use cases. Try building your own Solana whitelist program today! 🚀
