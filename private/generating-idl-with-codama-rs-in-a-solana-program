@@ -1,0 +1,53 @@
+Generating IDL with Codama-RS in a Solana Program
+Introduction
+
+In this post, I will walk through how to generate an Interface Definition Language (IDL) file using the codama-rs crate for a Solana program. IDL files are essential for interacting with Solana smart contracts in a structured way, especially when building SDKs or front-end integrations.
+
+We will use my whitelist project as an example. I’ll demonstrate how I successfully generated an IDL from the existing Rust-based Solana program.
+What is codama-rs?
+
+Codama-RS is a crate that helps generate IDL files from Solana programs. It automates the process of defining the structure of accounts, instructions, and errors within the program.
+Why Use codama-rs?
+
+    Automates IDL generation.
+    Reduces manual work when documenting Solana programs.
+    Helps in SDK creation for front-end or off-chain clients.
+
+Step 1: Setting Up the Project
+
+First, clone the repository:
+
+git clone https://github.com/aoikurokawa/whitelist.git
+cd whitelist
+
+Ensure your Rust and Solana toolchain are set up:
+
+rustup default stable
+cargo install --git https://github.com/itszn/codama-rs codama
+
+Step 2: Adding codama-rs to Your Project
+
+In Cargo.toml, add:
+
+[dependencies]
+codama = "0.1"
+
+Step 3: Generating the IDL
+
+Once the crate is added, use codama-rs to generate the IDL:
+
+codama idl whitelist
+
+This will produce an idl.json file, which contains structured metadata for your program.
+Step 4: Understanding the IDL Output
+
+The generated IDL includes:
+
+    Instructions: Defines program entry points.
+    Accounts: Describes data stored on-chain.
+    Types: Custom structures used in the program.
+    Errors: Possible program failures.
+
+Conclusion
+
+Using codama-rs, we can effortlessly generate IDL files for our Solana programs. This simplifies integration with front-end clients and SDKs, improving developer experience. Check out whitelist for a full example.
