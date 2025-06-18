@@ -180,7 +180,7 @@ Alternative: You can use classic tokens with repo scope, but fine-grained tokens
 #### Add to repository secrets:
 
 1. Repository → Settings → Secrets and variables → Actions
-2. Name: JITO_TEAM_PAT (or whatever you reference in your workflow)
+2. Name: REPO_PAT (or whatever you reference in your workflow)
 3. Value: Your generated token
 
 Why this is needed: The default GITHUB_TOKEN runs as the GitHub Actions bot, which can't bypass branch protection rules. A PAT authenticates as you (with admin permissions) and can push directly to protected branches.
