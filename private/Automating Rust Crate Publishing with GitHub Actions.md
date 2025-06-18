@@ -157,6 +157,29 @@ Before you can use this workflow, you'll need to set up a few secrets in your Gi
     - Name: CARGO_REGISTRY_TOKEN
     - Value: Your token from crates.io
 
+### Personal Access Token (For Protected Branches)
+
+If your repository has branch protection rules (which you should!), you'll need a Personal Access Token to allow the workflow to commit version updates directly to the main branch:
+
+#### Create a PAT:
+
+1. Go to GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)
+2. Click "Generate new token (classic)"
+3. Set expiration (recommend 1 year max)
+4. Select scopes: repo (full repository access) and workflow (if needed)
+5. Generate and copy the token immediately
+
+
+#### Add to repository secrets:
+
+1. Repository → Settings → Secrets and variables → Actions
+2. Name: JITO_TEAM_PAT (or whatever you reference in your workflow)
+3. Value: Your generated token
+
+Why this is needed: The default GITHUB_TOKEN runs as the GitHub Actions bot, which can't bypass branch protection rules. A PAT authenticates as you (with admin permissions) and can push directly to protected branches.
+
+Security tip: Consider using fine-grained tokens scoped to specific repositories and rotate them regularly.
+
 ## Running the Workflow
 
 The workflow is triggered manually with `workflow_dispatch`, giving you full control:
