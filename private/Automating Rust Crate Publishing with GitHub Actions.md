@@ -142,6 +142,21 @@ jobs:
       contents: write
 ```
 
+## Setup Requirements
+
+Before you can use this workflow, you'll need to set up a few secrets in your GitHub repository:
+
+### Getting Your Cargo Registry Token
+
+1. Log into [crates.io](https://crates.io/) and go to your Account Settings
+2. Create a new API token with a descriptive name (e.g., "GitHub Actions Publishing")
+3. Copy the token - you'll only see it once!
+4. Add it to GitHub Secrets:
+    - Go to your repository → Settings → Secrets and variables → Actions
+    - Click "New repository secret"
+    - Name: CARGO_REGISTRY_TOKEN
+    - Value: Your token from crates.io
+
 ## Running the Workflow
 
 The workflow is triggered manually with `workflow_dispatch`, giving you full control:
@@ -174,4 +189,4 @@ Whether you're publishing Solana programs or any other Rust crates, the patterns
 
 ---
 
-*The complete workflow file is available as a [GitHub Gist](your-gist-link-here). Feel free to adapt it for your own projects!*
+*The complete workflow file is available [here](https://github.com/jito-foundation/restaking/blob/master/.github/workflows/publish-crate.yaml).
