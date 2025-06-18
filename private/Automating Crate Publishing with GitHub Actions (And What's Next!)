@@ -1,0 +1,77 @@
+When working on a Rust monorepo with multiple crates, manually managing version bumps and publishing to crates.io can be error-prone and tedious. 
+Fortunately, GitHub Actions can automate this entire pipeline, from verified builds to testing and publishing.
+Here's how we're doing it—and where we're headed next.
+
+## Current Setup: Single Crate Publishing
+Our current GitHub Action is designed to publish a single crate, selected via the workflow_dispatch inputs. The setup supports key features like:
+
+Verified builds using solana-verify
+
+Artifact uploads of built .so files
+
+Automated testing with cargo nextest
+
+Controlled publishing to crates.io using cargo-release
+
+Optional dry-run mode
+
+GitHub Releases with auto-generated changelogs
+
+🧩 Inputs You Can Control
+When triggering the workflow manually, you’ll be asked to specify:
+
+package_path: Which crate to publish (selected from a predefined list)
+
+level: Version bump level (patch, minor, or major)
+
+dry_run: Whether to simulate the release without publishing
+
+create_release: Whether to create a GitHub release
+
+This allows precise control over the publishing process with a single click or API call.
+
+✅ Verified Build Stage
+Before anything is published, we use solana-verify with Docker to ensure that our Solana programs build reproducibly. This step ensures compliance with ecosystem standards and gives us confidence in the integrity of our binaries.
+
+yaml
+Copy
+Edit
+- run: solana-verify build --library-name jito_restaking_program ...
+Artifacts (.so files) are then uploaded for use in later jobs.
+
+🧪 Test Stage
+We download the built artifacts and run our full test suite with cargo nextest, ensuring the entire codebase works as expected before any publishing step.
+
+📦 Publish Stage
+This is where the magic happens.
+
+We use cargo-release to handle version bumping, changelog generation, Git tagging, and publishing to crates.io. It even respects dry-run mode to avoid accidental publishes.
+
+If create_release is true, the workflow generates a changelog from the Git history and creates a GitHub release with the proper tag.
+
+yaml
+Copy
+Edit
+cargo release ${{ inputs.level }} --no-confirm -x
+📝 GitHub Releases
+Releases are tagged and named using the crate and version, like restaking_sdk-v0.3.0, and include a changelog auto-generated from commit messages using metcalfc/changelog-generator.
+
+🔜 What’s Next: Multi-Crate Publishing
+We plan to extend this pipeline to support batch publishing of multiple crates in a single run. This would include:
+
+Iterating over an array of crate paths
+
+Respecting interdependencies and publishing order
+
+Enhanced changelog generation per crate
+
+Optional group release (e.g., a GitHub Release for multiple crates)
+
+Why Multi-Crate Support?
+In a workspace with closely related crates (e.g., vault_sdk, vault_core, vault_program), changes often span multiple packages. Being able to publish them together ensures version compatibility and reduces manual overhead.
+
+🙌 Final Thoughts
+This GitHub Action setup makes Rust crate publishing safer, more reliable, and fully traceable. With verified builds, automated changelogs, and flexible controls, it’s a strong foundation for teams building in the open—and it’s only getting better.
+
+Next up: full multi-crate support. Stay tuned!
+
