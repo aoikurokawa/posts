@@ -161,13 +161,20 @@ Before you can use this workflow, you'll need to set up a few secrets in your Gi
 
 If your repository has branch protection rules (which you should!), you'll need a Personal Access Token to allow the workflow to commit version updates directly to the main branch:
 
-#### Create a PAT:
+#### Create a Fine-grained PAT (recommended):
 
-1. Go to GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)
-2. Click "Generate new token (classic)"
-3. Set expiration (recommend 1 year max)
-4. Select scopes: repo (full repository access) and workflow (if needed)
-5. Generate and copy the token immediately
+1. Go to GitHub Settings → Developer settings → Fine-grained tokens
+2. Click "Generate new token"
+3. Select your specific repository (more secure than classic tokens)
+4. Set expiration (recommend 1 year max)
+5. Set permissions:
+    - Contents: Read and write
+    - Metadata: Read
+    - Actions: Write (if triggering workflows)
+
+Generate and copy the token immediately
+
+Alternative: You can use classic tokens with repo scope, but fine-grained tokens are more secure.
 
 
 #### Add to repository secrets:
