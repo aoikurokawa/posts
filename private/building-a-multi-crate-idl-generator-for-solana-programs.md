@@ -3,7 +3,8 @@
 When developing complex Solana programs that span multiple crates, generating Interface Definition Language (IDL) files becomes a crucial step in your build process.
 IDL files serve as the bridge between your on-chain programs and client applications, providing essential metadata about instructions, accounts, types, and events.
 
-In this post, we'll explore Rust utility that automatically generates consolidated IDL files from multi-crate Solana programs, examining how it works and why this approach is valuable for modern Solana development.
+In this post, we'll explore shank-idl-generator, a new crate available on crates.io that automatically generates consolidated IDL files from multi-crate Solana programs. 
+We'll examine how it works, why this approach is valuable for modern Solana development, and how you can start using it today.
 
 ## What Problem Does This Solve?
 
